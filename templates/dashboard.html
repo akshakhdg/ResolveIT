@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section>
+    <h1>Admin Dashboard</h1>
+    <p>View submitted IT support tickets.</p>
+
+    <div class="metrics-grid">
+    <div class="metric-card">
+        <h3>Total Tickets</h3>
+        <p>{{ total_tickets }}</p>
+    </div>
+
+    <div class="metric-card">
+        <h3>Open</h3>
+        <p>{{ open_tickets }}</p>
+    </div>
+
+    <div class="metric-card">
+        <h3>In Progress</h3>
+        <p>{{ in_progress_tickets }}</p>
+    </div>
+
+    <div class="metric-card">
+        <h3>Resolved</h3>
+        <p>{{ resolved_tickets }}</p>
+    </div>
+
+    <div class="metric-card urgent-card">
+        <h3>Urgent</h3>
+        <p>{{ urgent_tickets }}</p>
+    </div>
+</div>
+
+<form method="GET" action="/dashboard" class="filter-form">
+    <input type="text" name="search" placeholder="Search by requester name" value="{{ search }}">
+
+<select name="status">
+    <option value="">All Statuses</option>
+    <option value="Open" {% if status_filter == "Open" %}selected{% endif %}>Open</option>
+    <option value="In Progress" {% if status_filter == "In Progress" %}selected{% endif %}>In Progress</option>
+    <option value="Resolved" {% if status_filter == "Resolved" %}selected{% endif %}>Resolved</option>
+</select>
+
+    <select name="priority">
+    <option value="">All Priorities</option>
+    <option value="Low" {% if priority_filter == "Low" %}selected{% endif %}>Low</option>
+    <option value="Medium" {% if priority_filter == "Medium" %}selected{% endif %}>Medium</option>
+    <option value="High" {% if priority_filter == "High" %}selected{% endif %}>High</option>
+    <option value="Urgent" {% if priority_filter == "Urgent" %}selected{% endif %}>Urgent</option>
+</select>
+
+    <button type="submit">Filter</button>
+    <a href="/dashboard" class="clear-button">Clear</a>
+
+</form>
+    
+<table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for ticket in tickets %}
+        <tr>
+            <td>{{ ticket["id"] }}</td>
+            <td>{{ ticket["requester_name"] }}</td>
+            <td>{{ ticket["category"] }}</td>
+           <td>
+    <span class="badge priority-{{ ticket['priority']|lower|replace(' ', '-') }}">
+        {{ ticket["priority"] }}
+    </span>
+</td>
+
+         <td>
+    <span class="badge status-{{ ticket['status']|lower|replace(' ', '-') }}">
+        {{ ticket["status"] }}
+    </span>
+</td>
+<td>
+    <a href="/ticket/{{ ticket['id'] }}">View</a>
+</td>
+        </tr>
+
+    {% else %}
+<tr>
+    <td colspan="6" class="empty-state">No tickets found.</td>
+</tr>
+
+    {% endfor %}
+    </table>
+</section>
+
+{% endblock %}

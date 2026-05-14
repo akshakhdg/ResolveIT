@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section>
+    <h1>Ticket #{{ ticket["id"] }}</h1>
+    <p>Full details for this IT support request.</p>
+
+    <div class="detail-card">
+        <p><strong>Requester:</strong> {{ ticket["requester_name"] }}</p>
+        <p><strong>Email:</strong> {{ ticket["email"] }}</p>
+        <p><strong>Category:</strong> {{ ticket["category"] }}</p>
+        <p><strong>Priority:</strong> 
+            <span class="badge priority-{{ ticket['priority']|lower|replace(' ', '-') }}">
+                {{ ticket["priority"] }}
+            </span>
+        </p>
+        <p><strong>Status:</strong> 
+            <span class="badge status-{{ ticket['status']|lower|replace(' ', '-') }}">
+                {{ ticket["status"] }}
+            </span>
+        </p>
+
+        <p><strong>Description:</strong></p>
+        <p class="description-box">{{ ticket["description"] }}</p>
+        <p><strong>Resolution Note:</strong></p>
+        <p class="description-box">
+            {% if ticket["resolution_note"] %}
+        {{ ticket["resolution_note"] }}
+            {% else %}
+        No resolution note added yet.
+            {% endif %}
+</p>
+    </div>
+
+    <form method="POST" action="/ticket/{{ ticket['id'] }}/update">
+    <label>Update Status:</label><br>
+    <select name="status">
+        <option value="Open">Open</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Resolved">Resolved</option>
+    </select><br><br>
+
+    <label>Resolution Note:</label><br>
+<textarea name="resolution_note" rows="4" placeholder="Example: Reset the user's password and confirmed access."></textarea><br><br>
+
+    <button type="submit">Update Ticket</button>
+</form>
+
+    <br>
+
+   <form method="POST" action="/ticket/{{ ticket['id'] }}/delete">
+    <button type="submit" class="danger-button">Delete Ticket</button>
+</form>
+
+<br>
+
+    <a href="/dashboard">Back to Dashboard</a>
+</section>
+{% endblock %}
